@@ -277,43 +277,6 @@ $cvv.blur(nameEvent).keyup(CVVEvent).keyup(enableSubmit);
 
 
 
-
-
-  //   if ('#credit-card').is(':visible') {
-  //   CreditCardNumberEvent ();
-  //   zipCodeEvent ();
-  //   CVVEvent ();
-  // }
-
-
-
-
-
-// function enableSubmit () {
-//   //change function to enable submit based on user selection payment method
-//   $('#payment').change(function() {
-//       if (this.value === 'paypal' || this.value === 'bitcoin') {
-//       $('#submit').prop('disabled', !canSubmitCreditCardHidden ());
-//
-//
-//     } else if (this.value === 'select_method' || this.value === 'credit card') {
-//       $('#submit').prop('disabled', !canSubmitCreditCard ());
-//     }
-//   });
-//       return $('#submit').prop('disabled', !canSubmitCreditCard ());
-//       console.log('cc fired');
-// }
-
-//$nameValue.blur(nameEvent).keyup(nameEvent).keyup(enableSubmit);
-
-// $activities.change(activitiesCheckedEvent).change(enableSubmit);
-// $cardNumber.blur(nameEvent).keyup(CreditCardNumberEvent).keyup(enableSubmit);
-// $zip.blur(nameEvent).keyup(zipCodeEvent).keyup(enableSubmit);
-// $cvv.blur(nameEvent).keyup(CVVEvent).keyup(enableSubmit);
-
-
-
-
 //exceeds --------------------------------
 //Real time validation for at least one field - done
 
