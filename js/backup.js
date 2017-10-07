@@ -252,6 +252,7 @@ function canSubmitCreditCard () {
 function canSubmitCreditCardHidden () {
   return isNameValid () && isEmailValid() && isOneActivitySelected();
 }
+
 function enableSubmit () {
   //change function to enable submit based on user selection payment method
   $('#payment').change(function() {
@@ -275,43 +276,30 @@ $zip.blur(nameEvent).keyup(zipCodeEvent).keyup(enableSubmit);
 $cvv.blur(nameEvent).keyup(CVVEvent).keyup(enableSubmit);
 
 
-
-
-
-
-  //   if ('#credit-card').is(':visible') {
-  //   CreditCardNumberEvent ();
-  //   zipCodeEvent ();
-  //   CVVEvent ();
-  // }
-
-
-
-
-
-// function enableSubmit () {
-//   //change function to enable submit based on user selection payment method
-//   $('#payment').change(function() {
-//       if (this.value === 'paypal' || this.value === 'bitcoin') {
-//       $('#submit').prop('disabled', !canSubmitCreditCardHidden ());
+enableSubmit();
+// function enableSubmit2 () {
 //
-//
-//     } else if (this.value === 'select_method' || this.value === 'credit card') {
-//       $('#submit').prop('disabled', !canSubmitCreditCard ());
-//     }
-//   });
-//       return $('#submit').prop('disabled', !canSubmitCreditCard ());
-//       console.log('cc fired');
-// }
-
-//$nameValue.blur(nameEvent).keyup(nameEvent).keyup(enableSubmit);
-
-// $activities.change(activitiesCheckedEvent).change(enableSubmit);
-// $cardNumber.blur(nameEvent).keyup(CreditCardNumberEvent).keyup(enableSubmit);
-// $zip.blur(nameEvent).keyup(zipCodeEvent).keyup(enableSubmit);
-// $cvv.blur(nameEvent).keyup(CVVEvent).keyup(enableSubmit);
-
-
+//       $('#payment').change(function() {
+//           if (this.value === 'paypal' || this.value === 'bitcoin') {
+//            $('#submit').click(function(canSubmitCreditCardHidden ()) {
+//              nameEvent ();
+//              emailEvent ();
+//              activitiesCheckedEvent ();
+//            });
+//          } else if (this.value === 'credit card' || this.value === 'select_method') {
+//           $('#submit').click(function(canSubmitCreditCard ()) {
+//             nameEvent ();
+//             emailEvent ();
+//             activitiesCheckedEvent ();
+//             CreditCardNumberEvent ();
+//             zipCodeEvent ();
+//             CVVEvent ();
+//           });
+//           }
+//        });
+//    }
+//    $emailValue.keyup(emailEvent);
+//    enableSubmit2();
 
 
 //exceeds --------------------------------

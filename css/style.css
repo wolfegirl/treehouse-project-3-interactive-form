@@ -74,7 +74,6 @@ label {
 	color: #000;
 	display: block;
 	margin-bottom: .5em;
-  margin-top: .5em;
 }
 
 input,
@@ -94,7 +93,7 @@ input {
 input:focus {
 	background: #fff;
 	border-color: #5e97b0;
-	transition: border-color .9s, background-color .9s;
+	transition: border-color .4s, background-color .4s;
 }
 
 input[type="checkbox"],
@@ -113,7 +112,6 @@ button {
 button:hover {
 	background: #184c62;
 }
-
 
 /* =================================
   Page Styles
@@ -135,7 +133,6 @@ button:hover {
 
 .credit-card {
 	margin-top: 1.25em;
-  display: block;
 }
 
 /* =================================
