@@ -74,6 +74,7 @@ label {
 	color: #000;
 	display: block;
 	margin-bottom: .5em;
+  margin-top: .5em;
 }
 
 input,
@@ -133,6 +134,7 @@ button:hover {
 
 .credit-card {
 	margin-top: 1.25em;
+
 }
 
 /* =================================
@@ -202,4 +204,8 @@ button:hover {
   margin-bottom: 1em;
   display: block;
   font-size: 10px;
+}
+.exp-date {
+  margin-top: 1.50em;
+
 }

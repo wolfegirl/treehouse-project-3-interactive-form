@@ -3,7 +3,7 @@
 
 //1. set focus on first text field when page loads
 
-const $name = $('#name').focus();
+$('#name').focus();
 
 //2.Reveal job role div if "other" is selected.
 
@@ -113,7 +113,8 @@ register ();
 
 function selectPayment () {
   $('#payment').change(function() {
-        if (this.value === 'paypal') {
+
+          if (this.value === 'paypal') {
             $('.paypal').css('display', 'block');
             $('#credit-card').hide();
             $('.bitcoin').hide();
@@ -133,151 +134,195 @@ function selectPayment () {
 selectPayment();
 //6. Form validation ---------------------------------------
 
-const messageName = 'Please enter a name.';
-const messageEmail = 'Please enter a valid email.';
-const messageCheckbox = 'Please check at least one activity.';
-const messageCreditCardNumber = 'Please enter a valid credit-card number';
-const messageCreditCardNumberDetail = 'Please enter a cc number that is between 13 and 16 digits long';
-const messageZip = '5 digits please.';
-const messageCVV = '3 digits please';
-
 let valid = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-let $nameValue = $('#name');
-let $emailValue = $('#mail');
+let $name = $('#name');
+let $email = $('#mail');
 let $checkedActivities = $('.activities input:checked');
 let $cardNumber = $('#cc-num');
 let $zip = $('#zip');
 let $cvv = $('#cvv');
-//global variable to insert errors after corresponding div
-let $errors = $('<div class="error"></div>');
+//dynammically change error message depending on how many cc digits
+
+let numberDigit;
+let creditCardMessage;
+
+    if ($cardNumber.val().length < 13) {
+      numberDigit = 'Too few digits. ';
+      } else if ($cardNumber.val().length > 16) {
+      numberDigit = 'Too many digits. ';
+    }
+    creditCardMessage = numberDigit + 'Please enter between 13 and 16.';
+
+const messageName = 'Please enter a name.';
+const messageEmail = 'Please enter a valid email.';
+const messageCheckbox = 'Please check at least one activity.';
+const messageZip = '5 digits please.';
+const messageCVV = '3 digits please.';
+
 //function to insert errors passing in corresponding arguments to div
-function errorMessage (divID, message, DIVSelector) {
-  let $errorDiv = $errors.insertAfter(divID);
-  $('.error').append().html(message);
+//arguments -
+//divID = div where error should show
+//message = error message variable to be placed
+//DIVSelector = div to add css red border to indicating error
+//errorID = inserting an error id to each dynamic div so we know what to hide should the input validate correctly
+//errorDivRemove = input with css border color indication error
+//errorIDRemove = div ID to remove error message
+
+
+function showErrorMessage (divID, message, DIVSelector, errorID) {
+  let $errorDiv = $('<div class="error" id="' + errorID + '"></div>');
+  $errorDiv.append().html(message).insertAfter(divID);
   DIVSelector.css('border-color', 'red');
-  $errors.show();
 }
-function removeErrorMessage (errorDiv) {
-  errorDiv.css('border-color', '#5e97b0');
-  $errors.hide();
+function removeErrorMessage (errorDivRemove, errorIDRemove) {
+  errorDivRemove.css('border-color', '#1da566');
+  $(errorIDRemove).remove();
+}
+//validate in real time - exceeds
+function validateKeyup (divValidate, divErrorValidate, functionValidate) {
+  divValidate.keyup(function() {
+  $(divErrorValidate).remove();//remove old errors to prevent duplicates
+  functionValidate();
+  });
 }
 
 
-
-
-//test name input is not empty
+//validate name field is not empty
 function isNameValid () {
-  return $nameValue.val().length > 0;
-}
+  return $name.val().length > 0;
+  }
 
 function nameEvent () {
   if (!isNameValid()) {
-    errorMessage ($nameValue, messageName, $nameValue);
+    showErrorMessage ($name, messageName, $name, 'nameError');
   } else {
-    removeErrorMessage ($nameValue);
-    }
+    removeErrorMessage ($name, '#nameError');
   }
+}
+validateKeyup ($name, '#nameError', nameEvent);
 
 
 //validate email
 function isEmailValid () {
-  if (valid.test($emailValue.val()) === true) {
-    return true;
-  }
+  return valid.test($email.val()) === true;
 }
 function emailEvent () {
   if (!isEmailValid()) {
-    errorMessage ($emailValue, messageEmail, $emailValue);
-  } else if (isEmailValid()) {
-    removeErrorMessage ($emailValue);
-    }
+    showErrorMessage ($email, messageEmail, $email, 'emailError');
+  } else {
+    removeErrorMessage ($email, '#emailError');
+  }
 }
+validateKeyup ($email, '#emailError', emailEvent);
+//same as -- below, just for my notes
+// $email.keyup(function() {
+//   $('#emailError').remove();//remove old errors to prevent duplicates
+//   emailEvent();
+// });
 
-//for checkbox - not working
+
+//validate at least one checkbox is selected
 function isOneActivitySelected () {
-  console.log($checkedActivities.length); //why won't it let me use this variable? I have it set to the selection below? it keeps returning 0??????
-
-  console.log($('.activities input:checked').length);
   return $('.activities input:checked').length > 0;
 }
 
 function activitiesCheckedEvent () {
-    if (!isOneActivitySelected()) {
-      errorMessage ($activities, messageCheckbox, $activities);
-    } else {
-      $errors.hide();
-    }
-}
-
-//Credit card field should only accept a number between 13 and 16 digits
-function isCreditCardValid () {
-return $cardNumber.val().length >= 13 && $cardNumber.val().length <= 16;
-}
-
-function CreditCardNumberEvent () {
-  if (!isCreditCardValid()) {
-    errorMessage ($cardNumber, messageCreditCardNumber, $cardNumber);
+  if (!isOneActivitySelected()) {
+    showErrorMessage ($activities, messageCheckbox, $activities, 'activitiesError');
   } else {
-    removeErrorMessage($cardNumber);
-  }
+    removeErrorMessage ($activities, '#activitiesError');
+    }
+ }
+$activities.change(activitiesCheckedEvent); // real time click with error
+
+
+ //Credit card field should only accept a number between 13 and 16 digits
+function isCreditCardValid () {
+  return $cardNumber.val().length >= 13 && $cardNumber.val().length <= 16 && $.isNumeric($cardNumber.val());
 }
 
-//The zipcode field should accept a 5-digit number
+function creditCardNumberEvent () {
+
+   if (!isCreditCardValid()) {
+     showErrorMessage ($cardNumber, creditCardMessage, $cardNumber, 'creditCardError');
+   } else {
+     removeErrorMessage($cardNumber, '#creditCardError');
+   }
+}
+validateKeyup ($cardNumber, '#creditCardError', creditCardNumberEvent);
+
+
+ //The zipcode field should accept a 5-digit number
 function isZipCodeValid () {
   return $zip.val().length === 5;
-}
+  }
 function zipCodeEvent () {
   if (!isZipCodeValid()) {
-    errorMessage ($zip, messageZip, $zip);
+     showErrorMessage ($zip, messageZip, $zip, 'zipError');
   } else {
-    removeErrorMessage($zip);
+     removeErrorMessage($zip, '#zipError');
   }
 }
+validateKeyup ($zip, '#zipError', zipCodeEvent);
+
 
 //The CVV should only accept a number that is exactly 3 digits long
 function isCVVValid () {
-  return $cvv.val().length === 3;
+   return $cvv.val().length === 3;
 }
 function CVVEvent () {
   if (!isCVVValid()) {
-    errorMessage ($cvv, messageCVV, $cvv);
+     showErrorMessage ($cvv, messageCVV, $cvv, 'CVVError');
   } else {
-    removeErrorMessage($cvv);
+     removeErrorMessage($cvv, '#CVVError');
   }
 }
+validateKeyup ($cvv, '#CVVError', CVVEvent);
 
-function canSubmitCreditCard () {
-  return isNameValid () && isEmailValid() && isOneActivitySelected() && isCreditCardValid() && isZipCodeValid() && isCVVValid();
-}
+
 function canSubmitCreditCardHidden () {
   return isNameValid () && isEmailValid() && isOneActivitySelected();
 }
-function enableSubmit () {
-  //change function to enable submit based on user selection payment method
-  $('#payment').change(function() {
-      if (this.value === 'paypal' || this.value === 'bitcoin') {
-      $('#submit').prop('disabled', !canSubmitCreditCardHidden ());
 
-
-    } else if (this.value === 'select_method' || this.value === 'credit card') {
-      $('#submit').prop('disabled', !canSubmitCreditCard ());
-    }
-  });
-      return $('#submit').prop('disabled', !canSubmitCreditCard ());
-      console.log('cc fired');
+function canSubmitCreditCardVisible () {
+  return isNameValid () && isEmailValid() && isOneActivitySelected() && isCreditCardValid() && isZipCodeValid() && isCVVValid();
 }
 
-$nameValue.blur(nameEvent).keyup(nameEvent).keyup(enableSubmit);
-$emailValue.blur(nameEvent).keyup(emailEvent).keyup(enableSubmit);
-$activities.change(activitiesCheckedEvent).change(enableSubmit);
-$cardNumber.blur(nameEvent).keyup(CreditCardNumberEvent).keyup(enableSubmit);
-$zip.blur(nameEvent).keyup(zipCodeEvent).keyup(enableSubmit);
-$cvv.blur(nameEvent).keyup(CVVEvent).keyup(enableSubmit);
+function enableSubmit1 () {
+  $('#submit').click(function(event) {
+    $('.error').remove();//remove old errors to prevent duplicates
+      if (!canSubmitCreditCardVisible()) {
+        event.preventDefault();
+        nameEvent();
+        emailEvent();
+        activitiesCheckedEvent();
+        creditCardNumberEvent();
+        zipCodeEvent ();
+        CVVEvent ();
+      } else {
+        alert('You sucessfully registered. Enjoy!')
+      }
+    });
+  }
 
-
-
-
-//exceeds --------------------------------
-//Real time validation for at least one field - done
-
-//Program at least one of your error messages so that more information is provided depending on the error. For example, if the user hasn’t entered a credit card number and the field is completely blank, the error message reads “Please enter a credit card number.” If the field isn’t empty but contains only 10 numbers, the error message reads “Please enter a number that is at least 16 digits long.”
+function enableSubmit2 () {
+  $('#submit').click(function(event) {
+    $('.error').remove();//remove old errors to prevent duplicates
+      if (!canSubmitCreditCardHidden()) {
+        event.preventDefault();
+        nameEvent();
+        emailEvent();
+        activitiesCheckedEvent();
+      } else {
+        alert('You sucessfully registered. Enjoy!')
+      }
+    });
+  }
+function submit(){
+    if ($('#credit-card:visible')) {
+      enableSubmit1();
+    } else {
+      enableSubmit2();
+    }
+}
+submit();
