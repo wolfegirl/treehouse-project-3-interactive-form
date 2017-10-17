@@ -1,20 +1,34 @@
 //Hi - thanks for grading! I am shooting for exceeds!
+//Note: the exceeds sections are: cc field changes in real time based on user input, all fields change in real time, color drop down menu is hidden
 
+let valid = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+let $name = $('#name');
+let $email = $('#mail');
+let $activities = $('.activities');
+let $checkedActivities = $('.activities input:checked');
+let $cardNumber = $('#cc-num');
+let $zip = $('#zip');
+let $cvv = $('#cvv');
 
-//1. set focus on first text field when page loads
+const messageName = 'Please enter a name.';
+const messageEmail = 'Please enter a valid email.';
+const messageCheckbox = 'Please check at least one activity.';
+const messageZip = '5 digits please.';
+const messageCVV = '3 digits please.';
 
+//on page load
+
+//give focus to the name field
 $('#name').focus();
-
-//2.Reveal job role div if "other" is selected.
-
-//hiding other job role div
+//hide the job role div
 $('.otherJobRoleDiv').hide();
-//disabling the select color field instead of hiding. Leaving this as a comment (exceeds requires hiding but I wanted to do both and leave in for notes - disabling/hiding)
-//$('#color').prop('disabled', 'disabled');
+
+//job role section-----------------------------------
+
+//Reveal job role div if "other" is selected.
 
 function toggleOtherJobRole() {
     $('#title').change(function() {
-      //$('.otherJobRoleDiv').toggle(this.value == 'other'); this is a way to do it without the animation - but the animation is cool
     if(this.value === 'other') {
       $('.otherJobRoleDiv').toggle('slow');
     } else {
@@ -24,36 +38,33 @@ function toggleOtherJobRole() {
 }
 toggleOtherJobRole();
 
-//3. display the color options that match the design selected in the "Design" menu.
+//t-shirt section--------------------------------------
+
+//display the color options that match the design selected in the "Design" menu
 
 function toggleTshirtSelection () {
+
   const $designSelection = $('#design');
   const $colorSelection = $('#color');
 
   $designSelection.change(function() {
-
     if (this.value === 'js puns') {
-      //$colorSelection.empty().prop('disabled', false); //this is to disable
-
       $('.colors-js-puns').css('display', 'block');
       $colorSelection.empty().append('<option value="cornflowerblue">Cornflower Blue (JS Puns shirt only)</option><option value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option><option value="gold">Gold (JS Puns shirt only)</option>');
     } else if (this.value === 'heart js') {
-      //$colorSelection.empty().prop('disabled', false); //this is to disable rather than hide
-
       $('.colors-js-puns').css('display', 'block');
       $colorSelection.empty().append('<option value="tomato">Tomato (I &#9829; JS shirt only)</option><option value="steelblue">Steel Blue (I &#9829; JS shirt only)</option><option value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>');
      } else if (this.value === 'select theme') {
-       //$('#color').prop('disabled', 'disabled'); to disable rather than hide
        $('.colors-js-puns').css('display', 'none');
     }
   });
 }
 toggleTshirtSelection();
 
-//4. Register for Activities section -------------------------
+//Register for Activities section-----------------------
 
-const $activities = $('.activities');
-//a function to toggle conflicting activities passing in each id name
+//toggle conflicting activities passing in each id name
+
 function toggleActivities(idName, idNameConflict) {
   $activities.change(function() {
   if ($(idName).is(':checked')) {
@@ -64,6 +75,7 @@ function toggleActivities(idName, idNameConflict) {
   });
 }
 //functions returning and passing in the proper conflicting activities by ID
+
 function idNameJsFrameworks () {
   return toggleActivities('#js-frameworks', '#express');
 }
@@ -84,7 +96,7 @@ function idNameNode () {
 }
 idNameNode ();
 
-//As a user selects activities, a running total should display below the list of checkboxes
+//As a user selects activities, a running total will display below the list of checkboxes
 
 function register() {
   //creating the new div to display running total
@@ -99,16 +111,16 @@ function register() {
   $('.totalLegendDiv').append().html('Total: $' + $total);
     if ($total !== 0) {
       $runningTotalFieldset.show();
-      }
-      else {
+    } else {
       $runningTotalFieldset.hide();
       }
   });
 }
 register ();
-//5. Payment info section -----------------------------------
 
-//Display payment sections based on the payment option chosen in the select menu
+//Payment info section -----------------------------------
+
+//Display paypal, bitcoin, or cc div based on the payment option selected
 
 
 function selectPayment () {
@@ -132,53 +144,35 @@ function selectPayment () {
       });
 }
 selectPayment();
-//6. Form validation ---------------------------------------
 
-let valid = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-let $name = $('#name');
-let $email = $('#mail');
-let $checkedActivities = $('.activities input:checked');
-let $cardNumber = $('#cc-num');
-let $zip = $('#zip');
-let $cvv = $('#cvv');
-//dynammically change error message depending on how many cc digits
+//Form validation ---------------------------------------
 
-let numberDigit;
-let creditCardMessage;
-
-    if ($cardNumber.val().length < 13) {
-      numberDigit = 'Too few digits. ';
-      } else if ($cardNumber.val().length > 16) {
-      numberDigit = 'Too many digits. ';
-    }
-    creditCardMessage = numberDigit + 'Please enter between 13 and 16.';
-
-const messageName = 'Please enter a name.';
-const messageEmail = 'Please enter a valid email.';
-const messageCheckbox = 'Please check at least one activity.';
-const messageZip = '5 digits please.';
-const messageCVV = '3 digits please.';
-
-//function to insert errors passing in corresponding arguments to div
-//arguments -
+//functions showErrorMessage, removeErrorMessage, validateKeyup - arguments defined -
 //divID = div where error should show
 //message = error message variable to be placed
 //DIVSelector = div to add css red border to indicating error
-//errorID = inserting an error id to each dynamic div so we know what to hide should the input validate correctly
+//errorID = inserting an error id to each dynamic div so we can select the div to hide when validate
+
 //errorDivRemove = input with css border color indication error
 //errorIDRemove = div ID to remove error message
 
+//divValidate = what div are we validating
+//divErrorValidate = div ID to remove when input is validated
+//functionValidate = event function to validate
 
+//dynamically inserts error div with error message
 function showErrorMessage (divID, message, DIVSelector, errorID) {
   let $errorDiv = $('<div class="error" id="' + errorID + '"></div>');
   $errorDiv.append().html(message).insertAfter(divID);
   DIVSelector.css('border-color', 'red');
 }
+
+//dynamically removes error div with correct input
 function removeErrorMessage (errorDivRemove, errorIDRemove) {
   errorDivRemove.css('border-color', '#1da566');
   $(errorIDRemove).remove();
 }
-//validate in real time - exceeds
+//validate in real time - error message will remove with correct user input
 function validateKeyup (divValidate, divErrorValidate, functionValidate) {
   divValidate.keyup(function() {
   $(divErrorValidate).remove();//remove old errors to prevent duplicates
@@ -186,6 +180,7 @@ function validateKeyup (divValidate, divErrorValidate, functionValidate) {
   });
 }
 
+//Name field------------------------------
 
 //validate name field is not empty
 function isNameValid () {
@@ -201,6 +196,7 @@ function nameEvent () {
 }
 validateKeyup ($name, '#nameError', nameEvent);
 
+//Email field------------------------------
 
 //validate email
 function isEmailValid () {
@@ -214,18 +210,13 @@ function emailEvent () {
   }
 }
 validateKeyup ($email, '#emailError', emailEvent);
-//same as -- below, just for my notes
-// $email.keyup(function() {
-//   $('#emailError').remove();//remove old errors to prevent duplicates
-//   emailEvent();
-// });
 
+//Activities checkbox field------------------------------
 
 //validate at least one checkbox is selected
 function isOneActivitySelected () {
   return $('.activities input:checked').length > 0;
 }
-
 function activitiesCheckedEvent () {
   if (!isOneActivitySelected()) {
     showErrorMessage ($activities, messageCheckbox, $activities, 'activitiesError');
@@ -235,61 +226,81 @@ function activitiesCheckedEvent () {
  }
 $activities.change(activitiesCheckedEvent); // real time click with error
 
+//CC field------------------------------
 
- //Credit card field should only accept a number between 13 and 16 digits
+//credit card field should only accept a number between 13 and 16 digits
 function isCreditCardValid () {
   return $cardNumber.val().length >= 13 && $cardNumber.val().length <= 16 && $.isNumeric($cardNumber.val());
 }
-
 function creditCardNumberEvent () {
-
    if (!isCreditCardValid()) {
-     showErrorMessage ($cardNumber, creditCardMessage, $cardNumber, 'creditCardError');
+     showErrorMessage ($cardNumber, creditCardMessageFunction, $cardNumber, 'creditCardError');
    } else {
      removeErrorMessage($cardNumber, '#creditCardError');
    }
 }
 validateKeyup ($cardNumber, '#creditCardError', creditCardNumberEvent);
 
+//dynammically change cc error message depending on how many cc digits, then calling the function in creditCardNumberEvent ()
+function creditCardMessageFunction () {
 
- //The zipcode field should accept a 5-digit number
-function isZipCodeValid () {
-  return $zip.val().length === 5;
+let numberDigit;
+let creditCardMessage;
+
+  if ($cardNumber.val().length < 13) {
+    numberDigit = 'Too few digits. ';
+  } else if ($cardNumber.val().length > 16) {
+    numberDigit = 'Too many digits. ';
+  } else {
+    numberDigit = 'Numeric Values Only. ';
   }
+  creditCardMessage = numberDigit + 'Please enter numbers between 13 and 16.';
+  return creditCardMessage;
+}
+
+//Zip field------------------------------
+
+//The zipcode field should accept a 5-digit number
+function isZipCodeValid () {
+  return $zip.val().length === 5 && $.isNumeric($zip.val());
+}
 function zipCodeEvent () {
   if (!isZipCodeValid()) {
-     showErrorMessage ($zip, messageZip, $zip, 'zipError');
+    showErrorMessage ($zip, messageZip, $zip, 'zipError');
   } else {
-     removeErrorMessage($zip, '#zipError');
+    removeErrorMessage($zip, '#zipError');
   }
 }
 validateKeyup ($zip, '#zipError', zipCodeEvent);
 
+//CVV field------------------------------
 
 //The CVV should only accept a number that is exactly 3 digits long
 function isCVVValid () {
-   return $cvv.val().length === 3;
+   return $cvv.val().length === 3 && $.isNumeric($cvv.val());
 }
 function CVVEvent () {
   if (!isCVVValid()) {
-     showErrorMessage ($cvv, messageCVV, $cvv, 'CVVError');
-  } else {
-     removeErrorMessage($cvv, '#CVVError');
+    showErrorMessage ($cvv, messageCVV, $cvv, 'CVVError');
+   } else {
+    removeErrorMessage($cvv, '#CVVError');
   }
 }
 validateKeyup ($cvv, '#CVVError', CVVEvent);
 
+//submit functions-------------------------
 
+//validate only these fields while cc div is hidden
 function canSubmitCreditCardHidden () {
   return isNameValid () && isEmailValid() && isOneActivitySelected();
 }
-
+//validate all fields if cc div is visible
 function canSubmitCreditCardVisible () {
   return isNameValid () && isEmailValid() && isOneActivitySelected() && isCreditCardValid() && isZipCodeValid() && isCVVValid();
 }
 
+//Submit if cc is visible
 function enableSubmit1 () {
-  $('#submit').click(function(event) {
     $('.error').remove();//remove old errors to prevent duplicates
       if (!canSubmitCreditCardVisible()) {
         event.preventDefault();
@@ -302,12 +313,10 @@ function enableSubmit1 () {
       } else {
         alert('You sucessfully registered. Enjoy!')
       }
-    });
   }
-
+//submit if cc is hidden
 function enableSubmit2 () {
-  $('#submit').click(function(event) {
-    $('.error').remove();//remove old errors to prevent duplicates
+    $('.error').remove();
       if (!canSubmitCreditCardHidden()) {
         event.preventDefault();
         nameEvent();
@@ -316,13 +325,12 @@ function enableSubmit2 () {
       } else {
         alert('You sucessfully registered. Enjoy!')
       }
-    });
   }
-function submit(){
-    if ($('#credit-card:visible')) {
+//submit
+$('#submit').click(function(event){
+    if ($('#credit-card').css('display')!=='none') {
       enableSubmit1();
     } else {
       enableSubmit2();
     }
-}
-submit();
+});
